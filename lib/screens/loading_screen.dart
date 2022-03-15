@@ -14,9 +14,6 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
 
-  double latitude;
-  double longitude;
-
   @override
   void initState() {
     super.initState();
@@ -27,16 +24,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
     Location user_location = Location();
     await user_location.getCurrentLocation();
 
-    latitude = user_location.latitude;
-    longitude = user_location.longitude;
-
     NetworkGetData networkGetData = NetworkGetData(
-        'https://api.openweathermap.org/data/2.5/onecall?lat=$latitude&lon=$longitude&exclude=hourly,daily&appid=$apiKey');
+        'https://api.openweathermap.org/data/2.5/onecall?lat=37&lon=127&exclude=hourly,daily&appid=$apiKey&units=metric'); // 37 127을 고칠것 ${user_location.latitude} ${user_location.longitude}로
 
     var received_weatherData = await networkGetData.get();
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
-    return LocationScreen();
+    return LocationScreen(locationWeather: received_weatherData,);
     }));
 
   }
