@@ -7,10 +7,11 @@ const apiKey = 'cadf49837ccb3c2815996601f83586f9';
 class WeatherModelAndData {
 
   Future<dynamic> getWeaterFromCity(String received_CityName) async{
-     var cityname_url='api.openweathermap.org/data/2.5/weather?q=$received_CityName&appid=$apiKey&units=metric';
+     var cityname_url='https://api.openweathermap.org/data/2.5/weather?q=$received_CityName&appid=$apiKey&units=metric';
      NetworkGetData networkGetData = await NetworkGetData(cityname_url);
-     var city_WeatherDate=networkGetData.get();
-     return city_WeatherDate;
+     var city_WeatherData=networkGetData.get();
+     print(city_WeatherData);
+     return city_WeatherData;
   }
 
   Future<dynamic> getLocationAndDataInside() async {
@@ -18,9 +19,10 @@ class WeatherModelAndData {
     await user_location.getCurrentLocation();
 
     NetworkGetData networkGetData = NetworkGetData(
-        'https://api.openweathermap.org/data/2.5/onecall?lat=37&lon=127&exclude=hourly,daily&appid=$apiKey&units=metric'); // 37 127을 고칠것 ${user_location.latitude} ${user_location.longitude}로
+        'https://api.openweathermap.org/data/2.5/weather?lat=${user_location.latitude}&lon=${user_location.longitude}&appid=$apiKey&units=metric'); // 37 127을 고칠것 ${user_location.latitude} ${user_location.longitude}로
 
     var received_weatherData = await networkGetData.get();
+    print(received_weatherData);
 
     return received_weatherData;
   }

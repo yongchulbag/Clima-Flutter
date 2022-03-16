@@ -39,12 +39,13 @@ class _LocationScreenState extends State<LocationScreen> {
         cityName = 'no where';
         return; // 여기 return을 넣으면 아래 6줄을 안 읽고 그냥 종료한다고 헌다!!! 진짜인가?
       }
-      double detail_temperature = screen_weather_data['current']['temp'];
+      double detail_temperature = screen_weather_data['main']['temp'];
       temperature = detail_temperature.toInt();
-      condition = screen_weather_data['current']['weather'][0]['id'];
-      cityName = screen_weather_data['timezone'];
+      condition = screen_weather_data['cod'];
+      cityName = screen_weather_data['name'];
       weatherIcon = weatherModel.getWeatherIcon(condition);
       weatherComment = weatherModel.getMessage(temperature);
+      print(weatherComment);
     });
   }
 
@@ -88,10 +89,11 @@ class _LocationScreenState extends State<LocationScreen> {
                           return CityScreen();
                         },
                       ));
+                      print(received_CityName);
                       if (received_CityName != null) {
-                        var screen_weather_data = await weatherModel.getWeaterFromCity(received_CityName);
-                        print(screen_weather_data);
-                        weatherPassToScreen(screen_weather_data);
+                        var renewed_screen_weather_data = await weatherModel.getWeaterFromCity(received_CityName);
+                        print(renewed_screen_weather_data);
+                        weatherPassToScreen(renewed_screen_weather_data);
                       }
                     },
                     child: Icon(
