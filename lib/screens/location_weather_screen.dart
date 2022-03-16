@@ -1,6 +1,8 @@
+import 'package:clima/screens/city_search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
-import 'package:clima/services/weather_access.dart';
+import 'package:clima/services/weather_access_and_data.dart';
+import 'package:clima/screens/city_search_screen.dart';
 
 class LocationScreen extends StatefulWidget {
   LocationScreen({this.locationWeather});
@@ -12,7 +14,7 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  WeatherModel weatherModel = WeatherModel();
+  WeatherModelAndData weatherModel = WeatherModelAndData();
   double detail_temperature;
   int temperature;
   int condition;
@@ -30,7 +32,13 @@ class _LocationScreenState extends State<LocationScreen> {
 
   void weatherPassToScreen(dynamic screen_weather_data) {
     setState(() {
-
+      if (screen_weather_data == null) {
+        temperature = 0;
+        weatherIcon = 'error T.T';
+        weatherComment = 'unable to get appropriate data';
+        cityName = 'no where';
+        return; // 여기 return을 넣으면 아래 6줄을 안 읽고 그냥 종료한다고 헌다!!! 진짜인가?
+      }
       double detail_temperature = screen_weather_data['current']['temp'];
       temperature = detail_temperature.toInt();
       condition = screen_weather_data['current']['weather'][0]['id'];
@@ -62,14 +70,30 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var screen_weather_data =
+                          await weatherModel.getLocationAndDataInside();
+                      weatherPassToScreen(screen_weather_data);
+                    },
                     child: Icon(
                       Icons.near_me,
                       size: 50.0,
                     ),
                   ),
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var received_CityName =
+                          await Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return CityScreen();
+                        },
+                      ));
+                      if (received_CityName != null) {
+                        var screen_weather_data = await weatherModel.getWeaterFromCity(received_CityName);
+                        print(screen_weather_data);
+                        weatherPassToScreen(screen_weather_data);
+                      }
+                    },
                     child: Icon(
                       Icons.location_city,
                       size: 50.0,
